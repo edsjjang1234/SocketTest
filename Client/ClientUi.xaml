@@ -1,0 +1,32 @@
+﻿<Window x:Class="Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Closed="Window_Closed">
+    <DockPanel>
+        <WrapPanel Height="37" VerticalAlignment="Top" Width="792" DockPanel.Dock="Top">
+            <Label Content="서버 IP :" Height="36" Width="61"/>
+            <TextBox x:Name="ipTxt" Height="32" TextWrapping="Wrap" Text="" Width="120"/>
+            <Label Content="포트 :" Width="43"/>
+            <TextBox x:Name="portTxt" Height="32" TextWrapping="Wrap" Text="" Width="58"/>
+            <Label Content="사용자 명 :" Width="82"/>
+            <TextBox x:Name="nickNameTxt" Height="30" TextWrapping="Wrap" Text="" Width="120"/>
+            <Button x:Name="connBtn" Content="접속" Width="85" Click="ConnBtn_Click"/>
+        </WrapPanel>
+        <WrapPanel Height="40" VerticalAlignment="Top" Width="787" Margin="0,342,0,0" DockPanel.Dock="Bottom">
+            <TextBox x:Name="sendTxt" Height="36" TextWrapping="Wrap" Text="" Width="681"/>
+            <Button x:Name="sendBtn" Content="전송" Width="102" Click="SendBtn_Click"/>
+        </WrapPanel>
+        <RichTextBox x:Name="viewTxt" Height="337" VerticalAlignment="Top" Width="788" Margin="0,0,0,-337">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text=""/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+
+    </DockPanel>
+</Window>

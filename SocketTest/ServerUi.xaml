@@ -1,0 +1,22 @@
+﻿<Window x:Class="SocketTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SocketTest"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Closed="Window_Closed">
+    <DockPanel>
+        <WrapPanel Height="44" VerticalAlignment="Top" Width="787" DockPanel.Dock="Top" Margin="2,0">
+            <Button x:Name="serverStartBtn" Content="시작" Width="154" Height="41" Click="ServerStartBtn_Click"/>
+        </WrapPanel>
+        <ListBox x:Name="nicListBox" Height="375" VerticalAlignment="Top" Width="100"/>
+        <RichTextBox x:Name="viewTxt" Height="375" VerticalAlignment="Top" Width="685">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text=""/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+    </DockPanel>
+</Window>
