@@ -14,7 +14,8 @@ namespace SocketTest
 {
 
     public class ServerSocket : MainWindow
-    { 
+    {
+        string a = string.Empty;
         private static Socket m_ServerSocket; //서버 소켓
         private static List<Socket> m_ClientSocket; //클라이언트 소켓 리스트
         private byte[] szData;  //클라이언트 데이터 버퍼 사이즈
