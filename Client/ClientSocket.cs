@@ -62,7 +62,7 @@ namespace Client
                     this.BeginSend(message);
                 });
                  
-                WriteLog.WriteSetLog("서버 접속");
+                    WriteLog.WriteSetLog("서버 접속");
 
                 tempSocket.EndConnect(IAR);
                 cbSocket = tempSocket;
