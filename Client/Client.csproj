@@ -107,7 +107,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Lib\SocketJsonLib.dll" />
   </ItemGroup>
