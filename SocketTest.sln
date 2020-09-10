@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "SocketTest\Server
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{90639F43-07AC-4C38-B90F-0486507719BA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{D64F82E8-8480-417A-9D22-4B036FA2F6A1}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\edsjj\source\repos\SocketJsonLib\SocketJsonLib\bin\Debug\SocketJsonLib.dll = C:\Users\edsjj\source\repos\SocketJsonLib\SocketJsonLib\bin\Debug\SocketJsonLib.dll
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
