@@ -21,7 +21,7 @@ namespace SocketTest
     public class ServerSocket : MainWindow
     {
         public static AddNickNameEventHandler NickNameEvent;
-        public AddMessageEventHandler MessageEvent;
+        public static AddMessageEventHandler MessageEvent;
 
         private static Socket m_ServerSocket; //서버 소켓
         private static List<Socket> m_ClientSocket; //클라이언트 소켓 리스트
@@ -45,18 +45,23 @@ namespace SocketTest
                 SocketAsyncEventArgs args = new SocketAsyncEventArgs(); //비동기 서버 이벤트
                 args.Completed += new EventHandler<SocketAsyncEventArgs>(Accept_Completed); //이벤트 발생시 Accept_Completed 함수 실행
                 m_ServerSocket.AcceptAsync(args);
-                //test();
-                MessageEvent += new AddMessageEventHandler(SetMessage);
-                MessageEvent("test");
-                
-                //SetMessage("서버 실행 성공!!");
-                
-                //ShowMesssge("서버 실행 성공!!");
+                  
+                Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (ThreadStart)delegate ()
+                {
+                    MessageEvent("서버 실행 성공!!");
+                });
+                  
             }
             catch(Exception ex)
-            {
-              //  MessageBox.Show(ex.ToString());
-                SetMessage("서버 실행 실패!!");
+            { 
+                Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (ThreadStart)delegate ()
+                {
+                    MessageEvent("서버 실행 실패!!");
+                });
+
+               // SetMessage("서버 실행 실패!!");
                 //ShowMesssge("서버 실행 실패!!");
                 WriteSetLog(ex.ToString());
 
@@ -111,8 +116,7 @@ namespace SocketTest
                         nickName = JsonConvert.SerializeObject(SocketJsonLib.SocketJson.ParserJson("nickName", text));
                         nickName = nickName.Replace("\"", "");
                         NickNameEvent(nickName);//닉네임 이벤트
-                        
-
+                          
                     });
                     
                     this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -126,15 +130,12 @@ namespace SocketTest
                         for (int i = 0; i < m_ClientSocket.Count; i++)
                         {
                             m_ClientSocket[i].Send(szData, szData.Length, SocketFlags.None);
-                        }
-                         
-                       // SetMessage(nickName + " : " + message);
-                         
-                        //this.ShowMesssge(nickName + " : " + message);
-                    });
+                        } 
 
-                    //szData = null;
-                    
+                        MessageEvent(nickName + " : "+ message);
+ 
+                    });
+ 
                     ClientSocket.ReceiveAsync(e);                   
                 }
                 else

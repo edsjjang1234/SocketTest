@@ -25,14 +25,11 @@ namespace SocketTest
     public partial class MainWindow : Window
     {
         
-        ServerSocket sSocket;
-      
+        ServerSocket sSocket; 
 
         public MainWindow()
-        {
-           
-            InitializeComponent();
-        
+        { 
+            InitializeComponent(); 
         }
 
         private void ServerStartBtn_Click(object sender, RoutedEventArgs e)
@@ -41,9 +38,8 @@ namespace SocketTest
             sSocket = new ServerSocket( );
             sSocket.StartServer();
             ServerSocket.NickNameEvent += new AddNickNameEventHandler(this.SetNickName);
-        }
-
-         
+            ServerSocket.MessageEvent += new AddMessageEventHandler(this.SetMessage);
+        } 
 
         private void SetNickName(string nickName)
         {
@@ -67,10 +63,7 @@ namespace SocketTest
         {
             try
             {
-                viewTxt.AppendText(message + "\n");
-                
-                //viewTxt.  
-              
+                viewTxt.AppendText(message + "\n");          
             }
             catch (Exception ex)
             {
