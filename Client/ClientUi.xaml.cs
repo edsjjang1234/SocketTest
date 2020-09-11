@@ -32,7 +32,7 @@ namespace Client
             InitializeComponent();
             cSocket = new ClientSocket(this);
              
-            WriteLog.WriteSetLog("클라이언트 실행");
+            //WriteLog.WriteSetLog("클라이언트 실행");
         }
 
         private void ConnBtn_Click(object sender, RoutedEventArgs e)
@@ -51,7 +51,7 @@ namespace Client
             }
             catch(Exception ex)
             {
-                WriteLog.WriteSetLog(ex.ToString());
+                //WriteLog.WriteSetLog(ex.ToString());
             }
         }
          
@@ -60,17 +60,19 @@ namespace Client
             //cSocket = new ClientSocket(this);
             try
             {
-                string message = JsonConvert.SerializeObject(SocketJsonLib.SocketJson.AddJson(nickNameTxt.Text, sendTxt.Text));
+                if (sendTxt.Text.Length > 0)
+                {
+                    string message = JsonConvert.SerializeObject(SocketJsonLib.SocketJson.AddJson(nickNameTxt.Text, sendTxt.Text));
                 
-                cSocket.BeginSend(message);
- 
-                WriteLog.WriteSetLog("메세지 (" + sendTxt.Text + ") 전송");
+                    cSocket.BeginSend(message);
+                }
+                //WriteLog.WriteSetLog("메세지 (" + sendTxt.Text + ") 전송");
                 sendTxt.Clear();
                 sendTxt.Focus();
             }
             catch (Exception ex)
             {
-                WriteLog.WriteSetLog(ex.ToString());
+                //WriteLog.WriteSetLog(ex.ToString());
             }
         } 
 
@@ -83,8 +85,25 @@ namespace Client
             }
             catch (Exception ex)
             {
-                WriteLog.WriteSetLog(ex.ToString());
+                //WriteLog.WriteSetLog(ex.ToString());
             }
+        }
+
+        private void SendTxt_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (sendTxt.Text.Length > 0)
+                {
+                    string message = JsonConvert.SerializeObject(SocketJsonLib.SocketJson.AddJson(nickNameTxt.Text, sendTxt.Text));
+
+                    cSocket.BeginSend(message);
+                }
+                //WriteLog.WriteSetLog("메세지 (" + sendTxt.Text + ") 전송");
+                sendTxt.Clear();
+                sendTxt.Focus();
+            }
+
         }
     }
 }

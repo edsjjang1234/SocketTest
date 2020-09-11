@@ -22,6 +22,7 @@ namespace Client
                 writer = File.AppendText(@"C:\log_" + DateTime.Now.ToString("yyyyMMdd") + ".txt");         //Text File이 저장될 위치(파일명)                                                                                                        
                 writer.WriteLine("[" + DateTime.Now + log);    //저장될 string
                 writer.Close();
+                writer.Dispose();
             }
             catch (Exception e)
             {

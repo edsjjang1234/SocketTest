@@ -21,24 +21,62 @@ using System.Windows.Threading;
 
 namespace SocketTest
 {
-    /// <summary>
-    /// MainWindow.xaml에 대한 상호 작용 논리
-    /// </summary>
+    
     public partial class MainWindow : Window
-    { 
+    {
+        
         ServerSocket sSocket;
+      
 
         public MainWindow()
         {
-            InitializeComponent(); 
+           
+            InitializeComponent();
+        
         }
 
         private void ServerStartBtn_Click(object sender, RoutedEventArgs e)
         {
-            sSocket = new ServerSocket(this);
+            //sSocket = new ServerSocket();
+            sSocket = new ServerSocket( );
             sSocket.StartServer();
+            ServerSocket.NickNameEvent += new AddNickNameEventHandler(this.SetNickName);
         }
- 
+
+         
+
+        private void SetNickName(string nickName)
+        {
+            int chk = 0;
+            for (int i = 0; i < nicListBox.Items.Count; i++)
+            {
+                if (nickName == nicListBox.Items[i].ToString())
+                {
+                    chk = 1;
+                }
+            }
+
+            if (chk == 0)
+            {
+                nicListBox.Items.Add(nickName); 
+            }
+            chk = 0;
+        }
+
+        public void SetMessage(string message)
+        {
+            try
+            {
+                viewTxt.AppendText(message + "\n");
+                
+                //viewTxt.  
+              
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
 
         private void Window_Closed(object sender, EventArgs e)
         {             

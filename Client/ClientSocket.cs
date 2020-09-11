@@ -39,7 +39,7 @@ namespace Client
             }
             catch (Exception ex)
             {
-                WriteLog.WriteSetLog(ex.ToString());
+               // WriteLog.WriteSetLog(ex.ToString());
             }
         }
 
@@ -58,19 +58,20 @@ namespace Client
                 (ThreadStart)delegate ()
                 {
                     //message = JsonConvert.SerializeObject(ClientSetJson.AddJson(main.nickNameTxt.Text, main.sendTxt.Text));
-                    message = JsonConvert.SerializeObject(SocketJsonLib.SocketJson.AddJson(main.nickNameTxt.Text, main.sendTxt.Text));
+                    message = JsonConvert.SerializeObject(SocketJsonLib.SocketJson.AddJson(main.nickNameTxt.Text, "접속"));
                     this.BeginSend(message);
+                    //this.BeginSend(main.nickNameTxt.Text + "접속");
                 });
                  
-                    WriteLog.WriteSetLog("서버 접속");
+                    //WriteLog.WriteSetLog("서버 접속");
 
                 tempSocket.EndConnect(IAR);
                 cbSocket = tempSocket;
-                cbSocket.BeginReceive(this.recvBuffer, 0, recvBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveCallBack), cbSocket);
+                cbSocket.BeginReceive(this.recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ReceiveCallBack, cbSocket);
             }
             catch (Exception ex)
             {
-                WriteLog.WriteSetLog(ex.ToString());
+                //WriteLog.WriteSetLog(ex.ToString());
             }
         }
 
@@ -84,17 +85,17 @@ namespace Client
 
                 if (rReadSize != 0)
                 {
-                    string sData = Encoding.Default.GetString(recvBuffer, 0, rReadSize);
+                    string sData = Encoding.UTF8.GetString(recvBuffer, 0, rReadSize);
                     string text = sData.Replace("\0", "").Trim();
                     ShowMeaasge(text);
-                    WriteLog.WriteSetLog("메세지 (" + text + ") 받음");
+                    //WriteLog.WriteSetLog("메세지 (" + text + ") 받음");
                 }
 
                 Receive();
             }
             catch (Exception ex)
             {
-                WriteLog.WriteSetLog(ex.ToString());
+                //WriteLog.WriteSetLog(ex.ToString());
             }
         }
 
@@ -106,7 +107,7 @@ namespace Client
             }
             catch (Exception ex)
             {
-                WriteLog.WriteSetLog(ex.ToString());
+                //WriteLog.WriteSetLog(ex.ToString());
             }
         }
               
@@ -117,13 +118,15 @@ namespace Client
             {
                 if (cSocket.Connected)
                 {
-                    byte[] buffer = Encoding.Default.GetBytes(message);
+                    byte[] buffer = Encoding.UTF8.GetBytes(message);
+                   
                     cSocket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(SendCallBack), message);
+                    
                 }
             }
             catch (Exception ex)
             {
-                WriteLog.WriteSetLog(ex.ToString());
+                //WriteLog.WriteSetLog(ex.ToString());
             }
         }
 
@@ -132,10 +135,11 @@ namespace Client
             try
             {
                 string message = (string)IAR.AsyncState;
+             
             }
             catch (Exception ex)
             {
-                WriteLog.WriteSetLog(ex.ToString());
+                //WriteLog.WriteSetLog(ex.ToString());
             }
         }
 
@@ -151,7 +155,7 @@ namespace Client
             }
             catch (Exception ex)
             {
-                WriteLog.WriteSetLog(ex.ToString());
+               // WriteLog.WriteSetLog(ex.ToString());
             }
         }
 
@@ -160,5 +164,5 @@ namespace Client
             cSocket.Close();
             cbSocket.Close();
         }
-    }
+    } 
 }

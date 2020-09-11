@@ -17,7 +17,7 @@
             <Button x:Name="connBtn" Content="접속" Width="85" Click="ConnBtn_Click"/>
         </WrapPanel>
         <WrapPanel Height="40" VerticalAlignment="Top" Width="787" Margin="0,342,0,0" DockPanel.Dock="Bottom">
-            <TextBox x:Name="sendTxt" Height="36" TextWrapping="Wrap" Text="" Width="681"/>
+            <TextBox x:Name="sendTxt" Height="36" TextWrapping="Wrap" Text="" Width="681" KeyDown="SendTxt_KeyDown"/>
             <Button x:Name="sendBtn" Content="전송" Width="102" Click="SendBtn_Click"/>
         </WrapPanel>
         <RichTextBox x:Name="viewTxt" Height="337" VerticalAlignment="Top" Width="788" Margin="0,0,0,-337">
