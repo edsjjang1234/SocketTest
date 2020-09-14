@@ -8,7 +8,7 @@
         Title="MainWindow" Height="450" Width="800" Closed="Window_Closed">
     <DockPanel>
         <WrapPanel Height="44" VerticalAlignment="Top" Width="787" DockPanel.Dock="Top" Margin="2,0">
-            <Button x:Name="serverStartBtn" Content="시작" Width="154" Height="41" Click="ServerStartBtn_Click"/>
+            <Button x:Name="serverStartBtn" Content="시작" Width="154" Height="41"/>
         </WrapPanel>
         <ListBox x:Name="nicListBox" Height="375" VerticalAlignment="Top" Width="100"/>
         <RichTextBox x:Name="viewTxt" Height="375" VerticalAlignment="Top" Width="685">

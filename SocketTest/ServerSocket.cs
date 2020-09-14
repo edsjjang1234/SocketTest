@@ -16,23 +16,20 @@ using System.Windows;
 namespace SocketTest
 {
     public delegate void AddNickNameEventHandler(string nickName);
+    public delegate void OutNickNameEventHandler(string nickName);
     public delegate void AddMessageEventHandler(string massage);
 
     public class ServerSocket : MainWindow
     {
-        public static AddNickNameEventHandler NickNameEvent;
+        public static AddNickNameEventHandler AddNickNameEvent;
         public static AddMessageEventHandler MessageEvent;
+        public static OutNickNameEventHandler OutNickNameEvent;
 
         private static Socket m_ServerSocket; //서버 소켓
         private static List<Socket> m_ClientSocket; //클라이언트 소켓 리스트
-        private byte[] szData;  //클라이언트 데이터 버퍼 사이즈
-       // MainWindow main = null;
+        private byte[] szData;  //클라이언트 데이터 버퍼 사이즈        
         string nickName = string.Empty;
-        //public ServerSocket(MainWindow main)
-        //{
-        //    this.main = main;
-        //}
-
+         
         public void StartServer()
         { 
             try
@@ -51,7 +48,8 @@ namespace SocketTest
                 {
                     MessageEvent("서버 실행 성공!!");
                 });
-                  
+                WriteLog.WriteLogger("서버 실행");
+
             }
             catch(Exception ex)
             { 
@@ -61,18 +59,14 @@ namespace SocketTest
                     MessageEvent("서버 실행 실패!!");
                 });
 
-               // SetMessage("서버 실행 실패!!");
-                //ShowMesssge("서버 실행 실패!!");
-                WriteSetLog(ex.ToString());
-
+                WriteLog.WriteLogger(ex.ToString());
             }
         }
          
         private void Accept_Completed(object sender, SocketAsyncEventArgs e)
         {
             try
-            {
-              
+            { 
                 Socket ClientSocket = e.AcceptSocket;
                 m_ClientSocket.Add(ClientSocket);   //접속 요청 클라이언트 소켓 수락 후 리스트에 담음.
 
@@ -91,8 +85,7 @@ namespace SocketTest
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.ToString());
-                WriteSetLog(ex.ToString());
+                WriteLog.WriteLogger(ex.ToString());
             }
         }
          
@@ -102,113 +95,63 @@ namespace SocketTest
             try
             {  
                 if (ClientSocket.Connected && e.BytesTransferred > 0)    //클라이언트 소켓이 연결되어있고, 전송 바이트 확인
-                {
-
+                { 
                     var szData = e.Buffer.Take(e.BytesTransferred).ToArray();   //수신 데이터
                     string text = Encoding.UTF8.GetString(szData);
-                  
-                    string message = string.Empty;
-                    int chk = 0;
-
+                   
                     Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (ThreadStart)delegate ()
-                    { 
-                        nickName = JsonConvert.SerializeObject(SocketJsonLib.SocketJson.ParserJson("nickName", text));
-                        nickName = nickName.Replace("\"", "");
-                        NickNameEvent(nickName);//닉네임 이벤트
-                          
-                    });
-                    
-                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (ThreadStart)delegate ()
                     {
-                        message = JsonConvert.SerializeObject(SocketJsonLib.SocketJson.ParserJson("message", text));
-                        message = message.Replace("\"", "");
-                        // szData = null;
-                        szData = Encoding.UTF8.GetBytes(nickName + " : " + message);
-                         
+                        var str = MessagePacket.Parse(text); //json 파싱
+
+                        nickName = str.NickName.ToString();
+                        AddNickNameEvent(str.NickName.ToString());//닉네임 이벤트
+
+                        szData = Encoding.UTF8.GetBytes(str.NickName.ToString() + " : " + str.Message.ToString());
+
                         for (int i = 0; i < m_ClientSocket.Count; i++)
                         {
                             m_ClientSocket[i].Send(szData, szData.Length, SocketFlags.None);
-                        } 
+                        }
 
-                        MessageEvent(nickName + " : "+ message);
- 
+                        MessageEvent(str.NickName.ToString() + " : " + str.Message.ToString());//메세지 이벤트
+
                     });
- 
+
                     ClientSocket.ReceiveAsync(e);                   
                 }
                 else
                 {
                     ClientSocket.Disconnect(false);
-                    m_ClientSocket.Remove(ClientSocket);
-                    SetMessage(nickName + "의 연결이 끊어졌습니다.");
-                    //this.ShowMesssge(nickName + "의 연결이 끊어졌습니다.");
+                    m_ClientSocket.Remove(ClientSocket); 
+                     
                     Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     (ThreadStart)delegate ()
                     {
-                        //for (int i = 0; i < main.nicListBox.Items.Count; i++)
-                        //{
-                        //    if (nickName == main.nicListBox.Items[i].ToString())
-                        //        main.nicListBox.Items.RemoveAt(i);
-                        //}
+                        MessageEvent(nickName + " : " + "의 연결이 끊어졌습니다.");
+                        OutNickNameEvent(nickName); 
                     });
                 }
             }catch(Exception ex)
             {
-                WriteSetLog(ex.ToString());
+                WriteLog.WriteLogger(ex.ToString());
             }
-        }
-         
-        //private void ShowMesssge(string message)
-        //{
-        //    try
-        //    {
-        //        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-        //        (ThreadStart)delegate ()
-        //        {
-        //            main.viewTxt.AppendText(message + "\n");
-        //        });
-        //    }catch(Exception ex)
-        //    {
-        //        WriteSetLog(ex.ToString());
-        //    }
-        //}
+        } 
 
         public static void ServerClose()
         {
             try
             {
                 if (m_ServerSocket != null)
-                {
-                    m_ServerSocket.Close();
-
-                }
-
+                    m_ServerSocket.Close(); 
+                 
                 if (m_ClientSocket != null)
                     m_ClientSocket.Clear();
             }
             catch (Exception ex)
             {
-                WriteSetLog(ex.ToString());
-            }
-           
-        }
-
-        public static void WriteSetLog(string log)
-        {
-            try
-            {
-                StreamWriter writer;
-                writer = File.AppendText(@"C:\log_" + DateTime.Now.ToString("yyyyMMdd") + ".txt");         //Text File이 저장될 위치(파일명)                                                                                                        
-                writer.WriteLine("[" + DateTime.Now + log);    //저장될 string
-                writer.Close();
-                writer.Dispose();
-            }
-            catch (Exception e)
-            {
-                 
-            }
-        }
+                WriteLog.WriteLogger(ex.ToString());
+            } 
+        } 
     }
 }

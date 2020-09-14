@@ -12,21 +12,17 @@ using System.Windows.Threading;
 using SocketJsonLib;
 namespace Client
 {
-    public class ClientSocket
+    public delegate void AddMessageEventHandler(string massage);
+
+    public class ClientSocket : MainWindow
     {
-        MainWindow main = null;
+        public static AddMessageEventHandler MessageEvent;
+        
         private Socket cSocket = null;
         private Socket cbSocket;
         private byte[] recvBuffer;
-        private const int MAXSIZE = 4096;
-        private string HOST = string.Empty;
-        private int PORT;
-         
-        public ClientSocket(MainWindow main)
-        {
-            this.main = main;
-        }
-
+        private const int MAXSIZE = 4096; 
+        
         public void ServerConnect(string HOST, int PORT)
         {
             try
@@ -39,47 +35,41 @@ namespace Client
             }
             catch (Exception ex)
             {
-               // WriteLog.WriteSetLog(ex.ToString());
+                WriteLog.WriteLogger(ex.ToString());
             }
         }
 
         private void ConnectCallBack(IAsyncResult IAR)
         {
             try
-            {
-
+            { 
                 string message = string.Empty;
                 Socket tempSocket = (Socket)IAR.AsyncState;
                 IPEndPoint ipep = (IPEndPoint)tempSocket.RemoteEndPoint;
-
-                // this.BeginSend("접속");
-
-                main.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+ 
+                Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (ThreadStart)delegate ()
                 {
-                    //message = JsonConvert.SerializeObject(ClientSetJson.AddJson(main.nickNameTxt.Text, main.sendTxt.Text));
-                    message = JsonConvert.SerializeObject(SocketJsonLib.SocketJson.AddJson(main.nickNameTxt.Text, "접속"));
-                    this.BeginSend(message);
-                    //this.BeginSend(main.nickNameTxt.Text + "접속");
+                    var p = new MessagePacket() { NickName = MainWindow._nickName, Message = "접속" };
+                    
+                    BeginSend(p.ToString());
+                     
                 });
-                 
-                    //WriteLog.WriteSetLog("서버 접속");
-
+                  
                 tempSocket.EndConnect(IAR);
                 cbSocket = tempSocket;
                 cbSocket.BeginReceive(this.recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ReceiveCallBack, cbSocket);
             }
             catch (Exception ex)
             {
-                //WriteLog.WriteSetLog(ex.ToString());
+                WriteLog.WriteLogger(ex.ToString());
             }
         }
 
         private void ReceiveCallBack(IAsyncResult IAR)
         {
             try
-            {
-
+            { 
                 Socket tempSocket = (Socket)IAR.AsyncState;
                 int rReadSize = tempSocket.EndReceive(IAR);
 
@@ -87,15 +77,15 @@ namespace Client
                 {
                     string sData = Encoding.UTF8.GetString(recvBuffer, 0, rReadSize);
                     string text = sData.Replace("\0", "").Trim();
-                    ShowMeaasge(text);
-                    //WriteLog.WriteSetLog("메세지 (" + text + ") 받음");
+                     
+                    MessageEvent(text);                    
                 }
 
                 Receive();
             }
             catch (Exception ex)
             {
-                //WriteLog.WriteSetLog(ex.ToString());
+                WriteLog.WriteLogger(ex.ToString());
             }
         }
 
@@ -107,10 +97,9 @@ namespace Client
             }
             catch (Exception ex)
             {
-                //WriteLog.WriteSetLog(ex.ToString());
+                WriteLog.WriteLogger(ex.ToString());
             }
-        }
-              
+        } 
 
         public void BeginSend(string message)
         {
@@ -120,13 +109,12 @@ namespace Client
                 {
                     byte[] buffer = Encoding.UTF8.GetBytes(message);
                    
-                    cSocket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(SendCallBack), message);
-                    
+                    cSocket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(SendCallBack), message); 
                 }
             }
             catch (Exception ex)
             {
-                //WriteLog.WriteSetLog(ex.ToString());
+                WriteLog.WriteLogger(ex.ToString());
             }
         }
 
@@ -139,30 +127,23 @@ namespace Client
             }
             catch (Exception ex)
             {
-                //WriteLog.WriteSetLog(ex.ToString());
+                WriteLog.WriteLogger(ex.ToString());
             }
-        }
-
-        private void ShowMeaasge(string message)
-        {
-            try
-            {
-                main.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (ThreadStart)delegate ()
-                {
-                    main.viewTxt.AppendText(message + "\n");
-                });
-            }
-            catch (Exception ex)
-            {
-               // WriteLog.WriteSetLog(ex.ToString());
-            }
-        }
+        } 
 
         public void ClientClose()
         {
-            cSocket.Close();
-            cbSocket.Close();
+            try
+            {
+                if (cSocket != null)
+                    cSocket.Close();
+                if (cbSocket != null)
+                    cbSocket.Close();
+            }
+            catch(Exception ex)
+            {
+                WriteLog.WriteLogger(ex.ToString());
+            }
         }
     } 
 }

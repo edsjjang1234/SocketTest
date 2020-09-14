@@ -23,42 +23,84 @@ namespace SocketTest
 {
     
     public partial class MainWindow : Window
-    {
-        
+    { 
         ServerSocket sSocket; 
 
         public MainWindow()
         { 
-            InitializeComponent(); 
+            InitializeComponent();
+            serverStartBtn.Click += ServerStartBtn_Click1;
         }
 
-        private void ServerStartBtn_Click(object sender, RoutedEventArgs e)
+        private void ServerStartBtn_Click1(object sender, RoutedEventArgs e)
         {
-            //sSocket = new ServerSocket();
-            sSocket = new ServerSocket( );
-            sSocket.StartServer();
-            ServerSocket.NickNameEvent += new AddNickNameEventHandler(this.SetNickName);
-            ServerSocket.MessageEvent += new AddMessageEventHandler(this.SetMessage);
-        } 
+            try
+            {
+                sSocket = new ServerSocket();
+                sSocket.StartServer();
+                ServerSocket.AddNickNameEvent += new AddNickNameEventHandler(this.SetNickName);
+                ServerSocket.MessageEvent += new AddMessageEventHandler(this.SetMessage);
+                ServerSocket.OutNickNameEvent += new OutNickNameEventHandler(this.outNickName);
+            }
+            catch (Exception ex)
+            {
 
+            }
+        }
+         
+        /// <summary>
+        /// 접속한 닉네임 확인하여 접속자 리스트에 뿌려줌.
+        /// </summary>
+        /// <param name="nickName"></param>
         private void SetNickName(string nickName)
         {
-            int chk = 0;
-            for (int i = 0; i < nicListBox.Items.Count; i++)
+            try
             {
-                if (nickName == nicListBox.Items[i].ToString())
+                int chk = 0;
+                for (int i = 0; i < nicListBox.Items.Count; i++)
                 {
-                    chk = 1;
+                    if (nickName == nicListBox.Items[i].ToString())
+                    {
+                        chk = 1;
+                    }
+                }
+
+                if (chk == 0)
+                {
+                    nicListBox.Items.Add(nickName);
+                }
+                chk = 0;
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        
+        /// <summary>
+        /// 접속 끊어진 닉네임 확인하여 접속자 리스트에서 제거
+        /// </summary>
+        /// <param name="nickName"></param>
+        private void outNickName(string nickName)
+        {
+            try
+            {
+                for (int i = 0; i < nicListBox.Items.Count; i++)
+                {
+                    if (nickName == nicListBox.Items[i].ToString())
+                        nicListBox.Items.RemoveAt(i);
                 }
             }
-
-            if (chk == 0)
+            catch (Exception ex)
             {
-                nicListBox.Items.Add(nickName); 
-            }
-            chk = 0;
-        }
 
+            }
+        }
+        
+        /// <summary>
+        /// 전송 메세지 UI처리
+        /// </summary>
+        /// <param name="message"></param>
         public void SetMessage(string message)
         {
             try
@@ -72,9 +114,16 @@ namespace SocketTest
         }
 
         private void Window_Closed(object sender, EventArgs e)
-        {             
-            ServerSocket.ServerClose();
-            Environment.Exit(0);
+        {
+            try
+            {
+                ServerSocket.ServerClose();
+                Environment.Exit(0);
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
     }
 }
