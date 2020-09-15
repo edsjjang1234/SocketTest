@@ -29,7 +29,7 @@ namespace SocketTest
         public MainWindow()
         { 
             InitializeComponent();
-            serverStartBtn.Click += ServerStartBtn_Click1;
+            serverStartBtn.Click += new RoutedEventHandler(ServerStartBtn_Click1);
         }
 
         private void ServerStartBtn_Click1(object sender, RoutedEventArgs e)
@@ -44,7 +44,7 @@ namespace SocketTest
             }
             catch (Exception ex)
             {
-
+                WriteLog.WriteLogger(ex.ToString());
             }
         }
          
@@ -73,12 +73,12 @@ namespace SocketTest
             }
             catch (Exception ex)
             {
-
+                WriteLog.WriteLogger(ex.ToString());
             }
         }
         
         /// <summary>
-        /// 접속 끊어진 닉네임 확인하여 접속자 리스트에서 제거
+        /// 접속 종료 닉네임 확인하여 접속자 리스트에서 제거
         /// </summary>
         /// <param name="nickName"></param>
         private void outNickName(string nickName)
@@ -93,7 +93,7 @@ namespace SocketTest
             }
             catch (Exception ex)
             {
-
+                WriteLog.WriteLogger(ex.ToString());
             }
         }
         
@@ -109,7 +109,7 @@ namespace SocketTest
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                WriteLog.WriteLogger(ex.ToString());
             }
         }
 
@@ -122,7 +122,7 @@ namespace SocketTest
             }
             catch(Exception ex)
             {
-
+                WriteLog.WriteLogger(ex.ToString());
             }
         }
     }

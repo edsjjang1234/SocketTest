@@ -26,15 +26,15 @@ namespace Client
     public partial class MainWindow : Window
     {
         ClientSocket cSocket;
-        public static string _nickName = string.Empty;
+        public static string NickName = string.Empty;
 
         public MainWindow()
         {
             InitializeComponent();
-
-            sendBtn.Click += new RoutedEventHandler(SendBtn_Click1);
+            
+            sendBtn.Click += new RoutedEventHandler(SendBtn_Click);
             sendTxt.KeyDown += new KeyEventHandler(SendTxt_KeyDown);            
-            connBtn.Click += new RoutedEventHandler(ConnBtn_Click1);
+            connBtn.Click += new RoutedEventHandler(ConnBtn_Click);
 
             WriteLog.WriteLogger("클라이언트 실행!!");
         }
@@ -59,16 +59,17 @@ namespace Client
             }                     
         } 
 
-        private void ConnBtn_Click1(object sender, RoutedEventArgs e)
+        private void ConnBtn_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 //if(ipTxt.Text.Length>0 && portTxt.Text.Length > 0 && nickNameTxt.Text.Length > 0)
                 //{
-                //cSocket.ServerConnect(ipTxt.Text, Convert.ToInt32(portTxt.Text));
-                _nickName = nickNameTxt.Text;
+
+                NickName = nickNameTxt.Text;
                 cSocket = new ClientSocket();
                 cSocket.ServerConnect("127.0.0.1", 9800);
+                //cSocket.ServerConnect(ipTxt.Text, Convert.ToInt32(portTxt.Text));
                 ClientSocket.MessageEvent += new AddMessageEventHandler(this.SetMessage);
                 //}
                 //else
@@ -82,7 +83,7 @@ namespace Client
             }
         }
 
-        private void SendBtn_Click1(object sender, RoutedEventArgs e)
+        private void SendBtn_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -104,11 +105,7 @@ namespace Client
         {
             try
             {
-                Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (ThreadStart)delegate ()
-                {
-                    viewTxt.AppendText(message + "\n");
-                });
+                viewTxt.AppendText(message + "\n");
             }
             catch (Exception ex)
             {

@@ -42,23 +42,16 @@ namespace SocketTest
                 SocketAsyncEventArgs args = new SocketAsyncEventArgs(); //비동기 서버 이벤트
                 args.Completed += new EventHandler<SocketAsyncEventArgs>(Accept_Completed); //이벤트 발생시 Accept_Completed 함수 실행
                 m_ServerSocket.AcceptAsync(args);
-                  
-                Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (ThreadStart)delegate ()
-                {
-                    MessageEvent("서버 실행 성공!!");
-                });
+
+                Dispatcher.BeginInvoke(new Action(() => MessageEvent("서버 실행 성공!!")));
+ 
                 WriteLog.WriteLogger("서버 실행");
 
             }
             catch(Exception ex)
-            { 
-                Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (ThreadStart)delegate ()
-                {
-                    MessageEvent("서버 실행 실패!!");
-                });
-
+            {
+                Dispatcher.BeginInvoke(new Action(() => MessageEvent("서버 실행 실패!!")));
+                
                 WriteLog.WriteLogger(ex.ToString());
             }
         }
@@ -98,39 +91,42 @@ namespace SocketTest
                 { 
                     var szData = e.Buffer.Take(e.BytesTransferred).ToArray();   //수신 데이터
                     string text = Encoding.UTF8.GetString(szData);
-                   
-                    Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (ThreadStart)delegate ()
+
+                    var jsonParser = MessagePacket.Parse(text); //json 파싱
+                    nickName = jsonParser.NickName.ToString();                    
+
+                    szData = Encoding.UTF8.GetBytes(jsonParser.NickName.ToString() + " : " + jsonParser.Message.ToString());
+                      
+                    Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        var str = MessagePacket.Parse(text); //json 파싱
+                        AddNickNameEvent(jsonParser.NickName.ToString());//닉네임 이벤트
+                        MessageEvent(jsonParser.NickName.ToString() + " : " + jsonParser.Message.ToString());//메세지 이벤트
+                    }));
 
-                        nickName = str.NickName.ToString();
-                        AddNickNameEvent(str.NickName.ToString());//닉네임 이벤트
-
-                        szData = Encoding.UTF8.GetBytes(str.NickName.ToString() + " : " + str.Message.ToString());
-
-                        for (int i = 0; i < m_ClientSocket.Count; i++)
-                        {
-                            m_ClientSocket[i].Send(szData, szData.Length, SocketFlags.None);
-                        }
-
-                        MessageEvent(str.NickName.ToString() + " : " + str.Message.ToString());//메세지 이벤트
-
-                    });
-
+                    for (int i = 0; i < m_ClientSocket.Count; i++)
+                    {
+                        m_ClientSocket[i].Send(szData, szData.Length, SocketFlags.None);
+                    }
+                     
                     ClientSocket.ReceiveAsync(e);                   
                 }
                 else
                 {
                     ClientSocket.Disconnect(false);
-                    m_ClientSocket.Remove(ClientSocket); 
-                     
-                    Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (ThreadStart)delegate ()
+                    m_ClientSocket.Remove(ClientSocket);
+
+                    szData = Encoding.UTF8.GetBytes(nickName + " : " + "의 연결이 끊어졌습니다.");
+                    for (int i = 0; i < m_ClientSocket.Count; i++)
+                    {
+                        m_ClientSocket[i].Send(szData, szData.Length, SocketFlags.None);
+                    }
+
+                    Dispatcher.BeginInvoke(new Action(() =>
                     {
                         MessageEvent(nickName + " : " + "의 연결이 끊어졌습니다.");
-                        OutNickNameEvent(nickName); 
-                    });
+                        OutNickNameEvent(nickName);
+                    }));
+ 
                 }
             }catch(Exception ex)
             {
@@ -142,12 +138,12 @@ namespace SocketTest
         {
             try
             {
-                if (m_ServerSocket != null)
+                if (m_ServerSocket != null)                     
                     m_ServerSocket.Close(); 
                  
-                if (m_ClientSocket != null)
-                    m_ClientSocket.Clear();
-            }
+                if (m_ClientSocket != null)                    
+                    m_ClientSocket.Clear();                    
+            }   
             catch (Exception ex)
             {
                 WriteLog.WriteLogger(ex.ToString());

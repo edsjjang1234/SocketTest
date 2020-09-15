@@ -46,16 +46,9 @@ namespace Client
                 string message = string.Empty;
                 Socket tempSocket = (Socket)IAR.AsyncState;
                 IPEndPoint ipep = (IPEndPoint)tempSocket.RemoteEndPoint;
- 
-                Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (ThreadStart)delegate ()
-                {
-                    var p = new MessagePacket() { NickName = MainWindow._nickName, Message = "접속" };
-                    
-                    BeginSend(p.ToString());
-                     
-                });
-                  
+                var json = new MessagePacket() { NickName = MainWindow.NickName, Message = "접속" };
+                BeginSend(json.ToString()); 
+
                 tempSocket.EndConnect(IAR);
                 cbSocket = tempSocket;
                 cbSocket.BeginReceive(this.recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ReceiveCallBack, cbSocket);
@@ -72,13 +65,13 @@ namespace Client
             { 
                 Socket tempSocket = (Socket)IAR.AsyncState;
                 int rReadSize = tempSocket.EndReceive(IAR);
-
+                //string text = string.Empty;
                 if (rReadSize != 0)
                 {
                     string sData = Encoding.UTF8.GetString(recvBuffer, 0, rReadSize);
                     string text = sData.Replace("\0", "").Trim();
-                     
-                    MessageEvent(text);                    
+                       
+                    Dispatcher.BeginInvoke(new Action(() => MessageEvent(text))); 
                 }
 
                 Receive();
@@ -122,8 +115,7 @@ namespace Client
         {
             try
             {
-                string message = (string)IAR.AsyncState;
-             
+                string message = (string)IAR.AsyncState; 
             }
             catch (Exception ex)
             {
@@ -135,9 +127,9 @@ namespace Client
         {
             try
             {
-                if (cSocket != null)
+                if (cSocket != null)                    
                     cSocket.Close();
-                if (cbSocket != null)
+                if (cbSocket != null) 
                     cbSocket.Close();
             }
             catch(Exception ex)
