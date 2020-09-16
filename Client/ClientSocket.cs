@@ -62,19 +62,23 @@ namespace Client
         private void ReceiveCallBack(IAsyncResult IAR)
         {
             try
-            { 
+            {
                 Socket tempSocket = (Socket)IAR.AsyncState;
-                int rReadSize = tempSocket.EndReceive(IAR);
-                //string text = string.Empty;
-                if (rReadSize != 0)
-                {
-                    string sData = Encoding.UTF8.GetString(recvBuffer, 0, rReadSize);
-                    string text = sData.Replace("\0", "").Trim();
-                       
-                    Dispatcher.BeginInvoke(new Action(() => MessageEvent(text))); 
-                }
+                if (tempSocket.Connected)
+                { 
+                    int rReadSize = tempSocket.EndReceive(IAR);
+                    //string text = string.Empty;
+                    if (rReadSize != 0)
+                    {
+                        string sData = Encoding.UTF8.GetString(recvBuffer, 0, rReadSize);
+                        string text = sData.Replace("\0", "").Trim();
 
-                Receive();
+                        Dispatcher.BeginInvoke(new Action(() => MessageEvent(text)));
+
+                    }
+
+                    Receive();
+                }
             }
             catch (Exception ex)
             {
@@ -126,10 +130,12 @@ namespace Client
         public void ClientClose()
         {
             try
-            {
-                if (cSocket != null)                    
+            {  
+                if (cSocket != null)
+                    //cSocket.Shutdown(SocketShutdown.Both);
                     cSocket.Close();
-                if (cbSocket != null) 
+                if (cbSocket != null)
+                    //cbSocket.Shutdown(SocketShutdown.Both);
                     cbSocket.Close();
             }
             catch(Exception ex)

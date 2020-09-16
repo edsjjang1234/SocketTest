@@ -12,6 +12,7 @@ using SocketJsonLib;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Windows;
+using System.Data;
 
 namespace SocketTest
 {
@@ -29,12 +30,16 @@ namespace SocketTest
         private static List<Socket> m_ClientSocket; //클라이언트 소켓 리스트
         private byte[] szData;  //클라이언트 데이터 버퍼 사이즈        
         string nickName = string.Empty;
-         
+        DataTable nickNameDt;
         public void StartServer()
         { 
             try
             { 
                 m_ClientSocket = new List<Socket>();    //클라이언트 소켓 리스트 초기화
+                nickNameDt = new DataTable();
+                nickNameDt.Columns.Add("IP", typeof(string));
+                nickNameDt.Columns.Add("NICKNAME", typeof(string));
+
                 m_ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);   //소켓 초기화
                 IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 9800);  //IP 및 포트  설정
                 m_ServerSocket.Bind(ipep);  //서버 바인딩
@@ -59,7 +64,8 @@ namespace SocketTest
         private void Accept_Completed(object sender, SocketAsyncEventArgs e)
         {
             try
-            { 
+            {
+                //e.DisconnectReuseSocket = false;
                 Socket ClientSocket = e.AcceptSocket;
                 m_ClientSocket.Add(ClientSocket);   //접속 요청 클라이언트 소켓 수락 후 리스트에 담음.
 
@@ -74,9 +80,11 @@ namespace SocketTest
                 }
                 e.AcceptSocket = null;
 
-                m_ServerSocket.AcceptAsync(e); //요청 소켓 처리 후 수락 대기 상태 변경
+                if(m_ServerSocket.Connected)
+                    m_ServerSocket.AcceptAsync(e); //요청 소켓 처리 후 수락 대기 상태 변경
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WriteLog.WriteLogger(ex.ToString());
             }
@@ -85,6 +93,7 @@ namespace SocketTest
         private void Receive_Completed(object sender, SocketAsyncEventArgs e)
         {
             Socket ClientSocket = (Socket)sender;
+            
             try
             {  
                 if (ClientSocket.Connected && e.BytesTransferred > 0)    //클라이언트 소켓이 연결되어있고, 전송 바이트 확인
@@ -93,8 +102,17 @@ namespace SocketTest
                     string text = Encoding.UTF8.GetString(szData);
 
                     var jsonParser = MessagePacket.Parse(text); //json 파싱
-                    nickName = jsonParser.NickName.ToString();                    
+                    nickName = jsonParser.NickName.ToString();
 
+                    //닉네임과 접속 IP PORT 수집
+                    DataRow[] resultRows;
+                    resultRows = nickNameDt.Select("[IP] = '" + ClientSocket.RemoteEndPoint.ToString() + "'");
+
+                    if (resultRows.Length == 0)
+                    {
+                        nickNameDt.Rows.Add(ClientSocket.RemoteEndPoint.ToString(), nickName);
+                    }
+                    
                     szData = Encoding.UTF8.GetBytes(jsonParser.NickName.ToString() + " : " + jsonParser.Message.ToString());
                       
                     Dispatcher.BeginInvoke(new Action(() =>
@@ -112,10 +130,20 @@ namespace SocketTest
                 }
                 else
                 {
+                    //접속 종료 IP PORT 번호로 닉네임 찾음
+                    DataRow[] resultRows;
+                    resultRows = nickNameDt.Select("[IP] = '" + ClientSocket.RemoteEndPoint.ToString() + "'");
+
+                    string outNickName = string.Empty;
+                    if (resultRows.Length > 0)
+                    {
+                        outNickName = resultRows[0].ItemArray[1].ToString();
+                    }
+
                     ClientSocket.Disconnect(false);
                     m_ClientSocket.Remove(ClientSocket);
 
-                    szData = Encoding.UTF8.GetBytes(nickName + " : " + "의 연결이 끊어졌습니다.");
+                    szData = Encoding.UTF8.GetBytes(outNickName + " : " + "의 연결이 끊어졌습니다.");
                     for (int i = 0; i < m_ClientSocket.Count; i++)
                     {
                         m_ClientSocket[i].Send(szData, szData.Length, SocketFlags.None);
@@ -123,8 +151,8 @@ namespace SocketTest
 
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        MessageEvent(nickName + " : " + "의 연결이 끊어졌습니다.");
-                        OutNickNameEvent(nickName);
+                        MessageEvent(outNickName + " : " + "의 연결이 끊어졌습니다.");
+                        OutNickNameEvent(outNickName);
                     }));
  
                 }
@@ -138,7 +166,9 @@ namespace SocketTest
         {
             try
             {
-                if (m_ServerSocket != null)                     
+                if (m_ServerSocket != null)
+                    //m_ServerSocket.Shutdown(SocketShutdown.Both);
+                   // m_ServerSocket.Disconnect(false);
                     m_ServerSocket.Close(); 
                  
                 if (m_ClientSocket != null)                    
