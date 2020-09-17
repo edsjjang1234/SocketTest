@@ -37,7 +37,7 @@ namespace SocketTest
             try
             { 
                 m_ClientSocket = new List<Socket>();    //클라이언트 소켓 리스트 초기화
-                nickNameDt = new DataTable();
+                nickNameDt = new DataTable();   //접속 클라이언트 IP NickName 수집하기 위한 DataTable
                 nickNameDt.Columns.Add("IP", typeof(string));
                 nickNameDt.Columns.Add("NICKNAME", typeof(string));
 

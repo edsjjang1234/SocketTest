@@ -70,14 +70,13 @@ namespace Client
                 { 
                     
                     int rReadSize = tempSocket.EndReceive(IAR);
-                    //string text = string.Empty;
+                     
                     if (rReadSize != 0)
                     {
                         string sData = Encoding.UTF8.GetString(recvBuffer, 0, rReadSize);
                         string text = sData.Replace("\0", "").Trim();
 
                         Dispatcher.BeginInvoke(new Action(() => MessageEvent(text)));
-
                     }
 
                     Receive();
@@ -136,10 +135,8 @@ namespace Client
             try
             {  
                 if (cSocket != null)
-                    //cSocket.Shutdown(SocketShutdown.Both);
                     cSocket.Close();
                 if (cbSocket != null)
-                    //cbSocket.Shutdown(SocketShutdown.Both);
                     cbSocket.Close();
             }
             catch(Exception ex)

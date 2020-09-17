@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Closed="Window_Closed">
+        Title="MainWindow" Height="450" Width="800">
     <DockPanel>
         <WrapPanel Height="37" VerticalAlignment="Top" Width="792" DockPanel.Dock="Top">
             <Label Content="서버 IP :" Height="36" Width="61"/>

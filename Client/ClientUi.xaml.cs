@@ -37,7 +37,7 @@ namespace Client
             sendBtn.Click += new RoutedEventHandler(SendBtn_Click);
             sendTxt.KeyDown += new KeyEventHandler(SendTxt_KeyDown);            
             connBtn.Click += new RoutedEventHandler(ConnBtn_Click);
-
+            Closed += new EventHandler(Window_Closed);
             WriteLog.WriteLogger("클라이언트 실행!!");
         }
 

@@ -31,6 +31,7 @@ namespace SocketTest
         { 
             InitializeComponent();
             serverStartBtn.Click += new RoutedEventHandler(ServerStartBtn_Click1);
+            Closed += new EventHandler(Window_Closed);
         }
 
         private void ServerStartBtn_Click1(object sender, RoutedEventArgs e)
@@ -50,7 +51,7 @@ namespace SocketTest
         }
          
         /// <summary>
-        /// 접속한 닉네임 확인하여 접속자 리스트에 뿌려줌.
+        /// 접속한 닉네임 확인하여 접속자 리스트에 입력.
         /// </summary>
         /// <param name="nickName"></param>
         private void SetNickName(string nickName)
