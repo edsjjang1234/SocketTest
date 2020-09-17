@@ -130,7 +130,7 @@ namespace SocketTest
                 }
                 else
                 {
-                    //접속 종료 IP PORT 번호로 닉네임 찾음
+                    //접속 종료 IP PORT 번호로 닉네임 찾아서 변수에 저장
                     DataRow[] resultRows;
                     resultRows = nickNameDt.Select("[IP] = '" + ClientSocket.RemoteEndPoint.ToString() + "'");
 
@@ -138,6 +138,11 @@ namespace SocketTest
                     if (resultRows.Length > 0)
                     {
                         outNickName = resultRows[0].ItemArray[1].ToString();
+
+                        //찾은 닉네임 Rowindex 확인하여 DataTable에서 삭제
+                        int rowIndex = nickNameDt.Rows.IndexOf(resultRows[0]);
+                        nickNameDt.Rows[rowIndex].Delete();
+                        nickNameDt.AcceptChanges();
                     }
                     
                     ClientSocket.Disconnect(false);
