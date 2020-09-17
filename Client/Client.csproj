@@ -42,10 +42,6 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SocketJsonLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Lib\SocketJsonLib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
@@ -68,9 +64,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ClientSocket.cs" />
-    <Compile Include="JsonBase.cs" />
-    <Compile Include="MessagePacket.cs" />
-    <Compile Include="WriteLog.cs" />
     <Page Include="ClientUi.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -112,7 +105,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Lib\SocketJsonLib.dll" />
+    <ProjectReference Include="..\JsonPack\JsonLib.csproj">
+      <Project>{ff5788be-759b-44b1-a6e3-d8f1a65b2c25}</Project>
+      <Name>JsonLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WriteLogLib\WriteLogLib.csproj">
+      <Project>{C1F1EEB9-6C06-4A13-9E8C-DDBD358BCA71}</Project>
+      <Name>WriteLogLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

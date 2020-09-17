@@ -65,10 +65,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="JsonBase.cs" />
-    <Compile Include="MessagePacket.cs" />
     <Compile Include="ServerSocket.cs" />
-    <Compile Include="WriteLog.cs" />
     <Page Include="ServerUi.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -108,6 +105,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JsonPack\JsonLib.csproj">
+      <Project>{ff5788be-759b-44b1-a6e3-d8f1a65b2c25}</Project>
+      <Name>JsonLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WriteLogLib\WriteLogLib.csproj">
+      <Project>{c1f1eeb9-6c06-4a13-9e8c-ddbd358bca71}</Project>
+      <Name>WriteLogLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

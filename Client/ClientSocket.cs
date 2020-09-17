@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using JsonPack;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using SocketJsonLib;
+using WriteLogLib;
+
 namespace Client
 {
     public delegate void AddMessageEventHandler(string massage);
@@ -54,7 +56,7 @@ namespace Client
                 cbSocket.BeginReceive(this.recvBuffer, 0, recvBuffer.Length, SocketFlags.None, ReceiveCallBack, cbSocket);
             }
             catch (Exception ex)
-            {
+            {                
                 WriteLog.WriteLogger(ex.ToString());
             }
         }
@@ -66,6 +68,7 @@ namespace Client
                 Socket tempSocket = (Socket)IAR.AsyncState;
                 if (tempSocket.Connected)
                 { 
+                    
                     int rReadSize = tempSocket.EndReceive(IAR);
                     //string text = string.Empty;
                     if (rReadSize != 0)
@@ -82,6 +85,7 @@ namespace Client
             }
             catch (Exception ex)
             {
+                Dispatcher.BeginInvoke(new Action(() => MessageEvent("서버와 연결이 끊겼습니다.")));
                 WriteLog.WriteLogger(ex.ToString());
             }
         }

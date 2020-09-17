@@ -7,12 +7,13 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
-using SocketJsonLib;
+using System.Windows.Threading; 
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Windows;
 using System.Data;
+using JsonPack;
+using WriteLogLib;
 
 namespace SocketTest
 {
@@ -64,8 +65,7 @@ namespace SocketTest
         private void Accept_Completed(object sender, SocketAsyncEventArgs e)
         {
             try
-            {
-                //e.DisconnectReuseSocket = false;
+            { 
                 Socket ClientSocket = e.AcceptSocket;
                 m_ClientSocket.Add(ClientSocket);   //접속 요청 클라이언트 소켓 수락 후 리스트에 담음.
 
@@ -80,8 +80,8 @@ namespace SocketTest
                 }
                 e.AcceptSocket = null;
 
-                if(m_ServerSocket.Connected)
-                    m_ServerSocket.AcceptAsync(e); //요청 소켓 처리 후 수락 대기 상태 변경
+                 
+                m_ServerSocket.AcceptAsync(e); //요청 소켓 처리 후 수락 대기 상태 변경
 
             }
             catch (Exception ex)
@@ -139,7 +139,7 @@ namespace SocketTest
                     {
                         outNickName = resultRows[0].ItemArray[1].ToString();
                     }
-
+                    
                     ClientSocket.Disconnect(false);
                     m_ClientSocket.Remove(ClientSocket);
 
