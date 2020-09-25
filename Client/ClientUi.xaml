@@ -9,11 +9,11 @@
     <DockPanel>
         <WrapPanel Height="37" VerticalAlignment="Top" Width="792" DockPanel.Dock="Top">
             <Label Content="서버 IP :" Height="36" Width="61"/>
-            <TextBox x:Name="ipTxt" Height="32" TextWrapping="Wrap" Text="" Width="120"/>
+            <TextBox x:Name="ipTxt" Text="127.0.0.1" Height="32" TextWrapping="Wrap" Width="120"/>
             <Label Content="포트 :" Width="43"/>
-            <TextBox x:Name="portTxt" Height="32" TextWrapping="Wrap" Text="" Width="58"/>
+            <TextBox x:Name="portTxt" Text="9800" Height="32" TextWrapping="Wrap" Width="58"/>
             <Label Content="사용자 명 :" Width="82"/>
-            <TextBox x:Name="nickNameTxt" Height="30" TextWrapping="Wrap" Text="" Width="120"/>
+            <TextBox x:Name="nickNameTxt" Height="30" TextWrapping="Wrap" Text="이대성" Width="120"/>
             <Button x:Name="connBtn" Content="접속" Width="85"/>
         </WrapPanel>
         <WrapPanel Height="40" VerticalAlignment="Top" Width="787" Margin="0,342,0,0" DockPanel.Dock="Bottom">

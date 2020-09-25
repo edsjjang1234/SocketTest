@@ -30,84 +30,18 @@ namespace SocketTest
         public MainWindow()
         { 
             InitializeComponent();
-            serverStartBtn.Click += new RoutedEventHandler(ServerStartBtn_Click1);
-            Closed += new EventHandler(Window_Closed);
+            serverStartBtn.Click += ServerStartBtn_Click1;           
         }
-
+        
         private void ServerStartBtn_Click1(object sender, RoutedEventArgs e)
         {
             try
-            {
+            { 
                 sSocket = new ServerSocket();
-                sSocket.StartServer();
-                ServerSocket.AddNickNameEvent += new AddNickNameEventHandler(this.SetNickName);
-                ServerSocket.MessageEvent += new AddMessageEventHandler(this.SetMessage);
-                ServerSocket.OutNickNameEvent += new OutNickNameEventHandler(this.outNickName);
-            }
-            catch (Exception ex)
-            {
-                WriteLog.WriteLogger(ex.ToString());
-            }
-        }
-         
-        /// <summary>
-        /// 접속한 닉네임 확인하여 접속자 리스트에 입력.
-        /// </summary>
-        /// <param name="nickName"></param>
-        private void SetNickName(string nickName)
-        {
-            try
-            {
-                int chk = 0;
-                for (int i = 0; i < nicListBox.Items.Count; i++)
-                {
-                    if (nickName == nicListBox.Items[i].ToString())
-                    {
-                        chk = 1;
-                    }
-                }
-
-                if (chk == 0)
-                {
-                    nicListBox.Items.Add(nickName);
-                }
-                chk = 0;
-            }
-            catch (Exception ex)
-            {
-                WriteLog.WriteLogger(ex.ToString());
-            }
-        }
-        
-        /// <summary>
-        /// 접속 종료 닉네임 확인하여 접속자 리스트에서 제거
-        /// </summary>
-        /// <param name="nickName"></param>
-        private void outNickName(string nickName)
-        {
-            try
-            {
-                for (int i = 0; i < nicListBox.Items.Count; i++)
-                {
-                    if (nickName == nicListBox.Items[i].ToString())
-                        nicListBox.Items.RemoveAt(i);
-                }
-            }
-            catch (Exception ex)
-            {
-                WriteLog.WriteLogger(ex.ToString());
-            }
-        }
-        
-        /// <summary>
-        /// 전송 메세지 UI처리
-        /// </summary>
-        /// <param name="message"></param>
-        public void SetMessage(string message)
-        {
-            try
-            {
-                viewTxt.AppendText(message + "\n");          
+                sSocket.OnMessageReceived += Client_OnMessageReceived;
+                sSocket.OnAccepted += (s, ev) => Dispatcher.Invoke(() => UpdateList());
+                sSocket.OnDisconnected += (s, ev) => Dispatcher.Invoke(() => UpdateList());
+                sSocket.StartServer(); 
             }
             catch (Exception ex)
             {
@@ -115,17 +49,23 @@ namespace SocketTest
             }
         }
 
-        private void Window_Closed(object sender, EventArgs e)
+        private void UpdateList()
         {
             try
             {
-                ServerSocket.ServerClose();
-                Environment.Exit(0);
+                nicListBox.ItemsSource = null;
+                nicListBox.ItemsSource = sSocket.ClientIDs;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WriteLog.WriteLogger(ex.ToString());
             }
         }
+        
+        private void Client_OnMessageReceived(object sender, string e)
+        {
+            //람다식
+            Dispatcher.Invoke(() => viewTxt.AppendText($"{e}\r"));
+        } 
     }
 }

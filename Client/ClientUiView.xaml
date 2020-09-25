@@ -1,0 +1,23 @@
+﻿<Window x:Class="Client.ClientUiView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"             
+             prism:ViewModelLocator.AutoWireViewModel="True" Height="539.5" Width="805.5">
+    <DockPanel>
+        <WrapPanel Height="37" VerticalAlignment="Top" Width="792" DockPanel.Dock="Top">
+            <Label Content="서버 IP :" Height="36" Width="61"/>
+            <TextBox x:Name="ipTxt"  Text="{Binding IpText}" Height="32" TextWrapping="Wrap" Width="120"/>
+            <Label Content="포트 :" Width="43"/>
+            <TextBox x:Name="portTxt" Text="{Binding Port}" Height="32" TextWrapping="Wrap" Width="58"/>
+            <Label Content="사용자 명 :" Width="82"/>
+            <TextBox x:Name="nickNameTxt" Height="30" TextWrapping="Wrap" Text="{Binding NickName}" Width="120"/>
+            <Button x:Name="connBtn" Content="접속" Width="85" Command="{Binding connectionCommand}" CommandParameter="접속"/>
+        </WrapPanel>
+        <WrapPanel Height="40" VerticalAlignment="Top" Width="787" Margin="0,342,0,0" DockPanel.Dock="Bottom">
+            <TextBox x:Name="sendTxt" Height="36" TextWrapping="Wrap" Text="{Binding SendText}" Width="681"/>
+            <Button x:Name="sendBtn" Content="전송" Width="102" Command="{Binding sendCommand}" CommandParameter="전송"/>
+        </WrapPanel>
+        <ListBox ItemsSource="{Binding ClientList}" Height="427" VerticalAlignment="Top" Width="789" Margin="0,0,0,-337"/>
+
+    </DockPanel>
+</Window>
