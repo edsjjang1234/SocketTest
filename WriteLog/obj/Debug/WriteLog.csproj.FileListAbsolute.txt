@@ -1,0 +1,6 @@
+D:\source\SocketTest\WriteLog\bin\Debug\WriteLog.dll
+D:\source\SocketTest\WriteLog\bin\Debug\WriteLog.pdb
+D:\source\SocketTest\WriteLog\obj\Debug\WriteLog.csprojAssemblyReference.cache
+D:\source\SocketTest\WriteLog\obj\Debug\WriteLog.csproj.CoreCompileInputs.cache
+D:\source\SocketTest\WriteLog\obj\Debug\WriteLog.dll
+D:\source\SocketTest\WriteLog\obj\Debug\WriteLog.pdb

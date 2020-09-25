@@ -22,7 +22,7 @@ namespace Client
             sendCommand = new DelegateCommand<object>(MessageSend);
             ClientList = new ObservableCollection<string>(); 
         }
-       // private string _SendText = string.Empty;
+       
         private ObservableCollection<string> _ClientList;
 
         public ObservableCollection<string> ClientList
