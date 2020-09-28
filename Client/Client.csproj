@@ -85,16 +85,8 @@
     </Compile>
     <Compile Include="ClientUiViewModel.cs" />
     <Compile Include="SimpleTcpClient.cs" />
-    <Page Include="ClientUi.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ClientUi.xaml.cs">
-      <DependentUpon>ClientUi.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="ClientUiView.xaml">
