@@ -5,3 +5,5 @@ Client/bin/
 SocketTest/bin/
 JsonPack/obj/
 WriteLogLib/obj/
+JsonPack/bin/
+WriteLogLib/bin/
